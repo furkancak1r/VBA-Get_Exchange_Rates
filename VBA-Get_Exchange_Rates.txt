@@ -1,0 +1,23 @@
+Sub GetExchangeRates()
+Dim url As String
+Dim response As Object
+Dim root As Object
+Dim eur_banknote_selling As Object
+Dim usd_banknote_selling As Object
+url = "https://www.tcmb.gov.tr/kurlar/today.xml"
+Set response = CreateObject("MSXML2.XMLHTTP")
+response.Open "GET", url, False
+response.Send
+Set root = CreateObject("MSXML2.DOMDocument")
+root.LoadXML (response.responseText)
+
+Set eur_banknote_selling = root.SelectSingleNode("//Currency[@Kod='EUR']/BanknoteSelling")
+Set usd_banknote_selling = root.SelectSingleNode("//Currency[@Kod='USD']/BanknoteSelling")
+
+With ThisWorkbook.Worksheets("KUR")
+    .Cells(1, 15).Value = "Efektif Satış EUR/TRY"
+    .Cells(1, 16).Value = eur_banknote_selling.Text
+    .Cells(2, 15).Value = "Efektif Satış USD/TRY"
+    .Cells(2, 16).Value = usd_banknote_selling.Text
+End With
+End Sub
